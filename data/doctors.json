@@ -1,0 +1,302 @@
+[
+  {
+    "id": "d001",
+    "name": "王大明",
+    "department": "家醫科",
+    "hospital": "台北市立聯合醫院",
+    "specialty": "一般內科、慢性病管理、健康檢查",
+    "rating": 4.8,
+    "review_count": 326,
+    "appointment_url": "https://www.gov.tw/hospital"
+  },
+  {
+    "id": "d002",
+    "name": "林雅婷",
+    "department": "家醫科",
+    "hospital": "馬偕醫院",
+    "specialty": "家庭醫學、預防醫學、戒菸門診",
+    "rating": 4.7,
+    "review_count": 215,
+    "appointment_url": "https://www.mmh.org.tw"
+  },
+  {
+    "id": "d003",
+    "name": "陳志偉",
+    "department": "家醫科",
+    "hospital": "國泰醫院",
+    "specialty": "社區醫學、老人醫學、整合照護",
+    "rating": 4.6,
+    "review_count": 189,
+    "appointment_url": "https://www.cgh.org.tw"
+  },
+  {
+    "id": "d004",
+    "name": "黃美珍",
+    "department": "神經內科",
+    "hospital": "台大醫院",
+    "specialty": "頭痛、腦血管疾病、腦中風",
+    "rating": 4.9,
+    "review_count": 412,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d005",
+    "name": "李建國",
+    "department": "神經內科",
+    "hospital": "榮民總醫院",
+    "specialty": "巴金森氏症、癲癇、神經退化疾病",
+    "rating": 4.8,
+    "review_count": 298,
+    "appointment_url": "https://www.vghtpe.gov.tw"
+  },
+  {
+    "id": "d006",
+    "name": "張淑芬",
+    "department": "神經內科",
+    "hospital": "長庚醫院",
+    "specialty": "頭痛、眩暈、周邊神經病變",
+    "rating": 4.7,
+    "review_count": 234,
+    "appointment_url": "https://www.cgmh.org.tw"
+  },
+  {
+    "id": "d007",
+    "name": "劉建志",
+    "department": "心臟內科",
+    "hospital": "台大醫院",
+    "specialty": "冠心症、心導管手術、心衰竭",
+    "rating": 4.9,
+    "review_count": 456,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d008",
+    "name": "黃秀英",
+    "department": "心臟內科",
+    "hospital": "馬偕醫院",
+    "specialty": "高血壓、心律不整、心臟超聲波",
+    "rating": 4.8,
+    "review_count": 321,
+    "appointment_url": "https://www.mmh.org.tw"
+  },
+  {
+    "id": "d009",
+    "name": "周文雄",
+    "department": "心臟內科",
+    "hospital": "國泰醫院",
+    "specialty": "心絞痛、心肌梗塞、周邊血管疾病",
+    "rating": 4.7,
+    "review_count": 267,
+    "appointment_url": "https://www.cgh.org.tw"
+  },
+  {
+    "id": "d010",
+    "name": "許淑華",
+    "department": "消化內科",
+    "hospital": "台大醫院",
+    "specialty": "肝膽腸胃、肝炎、肝硬化",
+    "rating": 4.9,
+    "review_count": 389,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d011",
+    "name": "吳正宗",
+    "department": "消化內科",
+    "hospital": "長庚醫院",
+    "specialty": "胃腸道疾病、消化道內視鏡、克隆氏症",
+    "rating": 4.8,
+    "review_count": 278,
+    "appointment_url": "https://www.cgmh.org.tw"
+  },
+  {
+    "id": "d012",
+    "name": "鄭秀玉",
+    "department": "消化內科",
+    "hospital": "榮民總醫院",
+    "specialty": "胰臟疾病、膽結石、胃食道逆流",
+    "rating": 4.7,
+    "review_count": 198,
+    "appointment_url": "https://www.vghtpe.gov.tw"
+  },
+  {
+    "id": "d013",
+    "name": "林建中",
+    "department": "骨科",
+    "hospital": "台大醫院",
+    "specialty": "骨折、關節置換、脊椎外科",
+    "rating": 4.8,
+    "review_count": 345,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d014",
+    "name": "蔡明哲",
+    "department": "骨科",
+    "hospital": "長庚醫院",
+    "specialty": "運動傷害、膝關節微創手術、肩關節",
+    "rating": 4.7,
+    "review_count": 256,
+    "appointment_url": "https://www.cgmh.org.tw"
+  },
+  {
+    "id": "d015",
+    "name": "楊正雄",
+    "department": "骨科",
+    "hospital": "國泰醫院",
+    "specialty": "骨質疏鬆、腰背痛、椎間盤突出",
+    "rating": 4.6,
+    "review_count": 187,
+    "appointment_url": "https://www.cgh.org.tw"
+  },
+  {
+    "id": "d016",
+    "name": "黃國賓",
+    "department": "泌尿科",
+    "hospital": "台大醫院",
+    "specialty": "攝護腺肥大、泌尿道結石、攝護腺癌",
+    "rating": 4.9,
+    "review_count": 298,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d017",
+    "name": "蕭文雄",
+    "department": "泌尿科",
+    "hospital": "榮民總醫院",
+    "specialty": "尿路感染、腎臟疾病、男性學",
+    "rating": 4.7,
+    "review_count": 212,
+    "appointment_url": "https://www.vghtpe.gov.tw"
+  },
+  {
+    "id": "d018",
+    "name": "顏志偉",
+    "department": "泌尿科",
+    "hospital": "長庚醫院",
+    "specialty": "尿路結石、膀胱功能障礙、腹腔鏡手術",
+    "rating": 4.8,
+    "review_count": 234,
+    "appointment_url": "https://www.cgmh.org.tw"
+  },
+  {
+    "id": "d019",
+    "name": "余曉寧",
+    "department": "眼科",
+    "hospital": "台大醫院",
+    "specialty": "白內障手術、視網膜疾病、黃斑部病變",
+    "rating": 4.9,
+    "review_count": 387,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d020",
+    "name": "鄧雅文",
+    "department": "眼科",
+    "hospital": "長庚醫院",
+    "specialty": "青光眼、角膜疾病、屈光手術",
+    "rating": 4.8,
+    "review_count": 276,
+    "appointment_url": "https://www.cgmh.org.tw"
+  },
+  {
+    "id": "d021",
+    "name": "胡怡君",
+    "department": "眼科",
+    "hospital": "馬偕醫院",
+    "specialty": "斜弱視、兒童眼科、眼整形",
+    "rating": 4.7,
+    "review_count": 198,
+    "appointment_url": "https://www.mmh.org.tw"
+  },
+  {
+    "id": "d022",
+    "name": "羅文昌",
+    "department": "耳鼻喉科",
+    "hospital": "台大醫院",
+    "specialty": "鼻竇炎、聽力障礙、頭頸部腫瘤",
+    "rating": 4.9,
+    "review_count": 334,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d023",
+    "name": "洪麗月",
+    "department": "耳鼻喉科",
+    "hospital": "長庚醫院",
+    "specialty": "眩暈、耳鳴、助聽器選配",
+    "rating": 4.8,
+    "review_count": 245,
+    "appointment_url": "https://www.cgmh.org.tw"
+  },
+  {
+    "id": "d024",
+    "name": "宋文傑",
+    "department": "耳鼻喉科",
+    "hospital": "馬偕醫院",
+    "specialty": "聲音沙啞、甲狀腺疾病、睡眠呼吸中止症",
+    "rating": 4.7,
+    "review_count": 189,
+    "appointment_url": "https://www.mmh.org.tw"
+  },
+  {
+    "id": "d025",
+    "name": "簡秀櫻",
+    "department": "皮膚科",
+    "hospital": "台大醫院",
+    "specialty": "乾癬、類澱粉症、皮膚免疫疾病",
+    "rating": 4.9,
+    "review_count": 312,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d026",
+    "name": "徐志偉",
+    "department": "皮膚科",
+    "hospital": "長庚醫院",
+    "specialty": "青春痘、濕疹、雷射美容",
+    "rating": 4.8,
+    "review_count": 267,
+    "appointment_url": "https://www.cgmh.org.tw"
+  },
+  {
+    "id": "d027",
+    "name": "林淑芬",
+    "department": "皮膚科",
+    "hospital": "馬偕醫院",
+    "specialty": "異位性皮膚炎、蕁麻疹、藥物過敏",
+    "rating": 4.7,
+    "review_count": 198,
+    "appointment_url": "https://www.mmh.org.tw"
+  },
+  {
+    "id": "d028",
+    "name": "張家豪",
+    "department": "兒科",
+    "hospital": "台大醫院",
+    "specialty": "小兒感染、小兒急診、新生兒科",
+    "rating": 4.9,
+    "review_count": 423,
+    "appointment_url": "https://www.ntuh.gov.tw"
+  },
+  {
+    "id": "d029",
+    "name": "賴怡君",
+    "department": "兒科",
+    "hospital": "長庚醫院",
+    "specialty": "兒童過敏、氣喘、發展遲緩",
+    "rating": 4.8,
+    "review_count": 356,
+    "appointment_url": "https://www.cgmh.org.tw"
+  },
+  {
+    "id": "d030",
+    "name": "曾淑菁",
+    "department": "兒科",
+    "hospital": "馬偕醫院",
+    "specialty": "疫苗接种、兒童腸胃、兒童腎臟",
+    "rating": 4.7,
+    "review_count": 278,
+    "appointment_url": "https://www.mmh.org.tw"
+  }
+]
