@@ -54,6 +54,12 @@
 
         <!-- Results Card (Hidden by default) -->
         <div id="resultsCard" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-6">
+            
+            <!-- Emergency Alert Banner -->
+            <div id="emergencyAlert" class="hidden bg-red-600 text-white rounded-xl p-4 mb-4 text-center font-bold text-lg">
+                🚨 <span id="emergencyText">請立即就醫或撥打 119 求救</span>
+            </div>
+
             <!-- Recommended Department -->
             <div class="text-center mb-6">
                 <div id="urgencyBadge" class="inline-block px-4 py-1 rounded-full text-white text-sm font-medium mb-3">
@@ -72,8 +78,7 @@
             <div class="border-t border-gray-200 pt-4 mb-4">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">備選科別</h3>
                 <div id="alternatives" class="flex flex-wrap gap-2">
-                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">感染科</span>
-                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">家醫科</span>
+                    <!-- Clickable alternative department buttons -->
                 </div>
             </div>
 
@@ -111,13 +116,16 @@
     </div>
 
     <script>
-        // Urgency level mappings
+        // Urgency level mappings with emoji
         const urgencyLabels = {
-            'routine': { text: '一般', color: 'bg-green-500', textColor: 'text-green-800' },
-            'recommend_visit': { text: '建議就醫', color: 'bg-yellow-500', textColor: 'text-yellow-800' },
-            'urgent': { text: '盡快就醫', color: 'bg-red-500', textColor: 'text-red-800' },
-            'emergency': { text: '急診', color: 'bg-red-600', textColor: 'text-red-800' }
+            'routine':      { emoji: '🟢', text: '一般',     color: 'bg-green-500' },
+            'recommend_visit': { emoji: '🟡', text: '建議就醫', color: 'bg-yellow-500' },
+            'urgent':       { emoji: '🔴', text: '盡快就醫',  color: 'bg-red-500' },
+            'emergency':    { emoji: '🚨', text: '急診',      color: 'bg-red-600' }
         };
+
+        // Store current alternatives for click switching
+        let currentAlternatives = [];
 
         async function analyzeSymptoms() {
             const symptoms = document.getElementById('symptoms').value.trim();
@@ -160,33 +168,37 @@
         }
 
         async function displayResults(result, symptoms) {
-            // Update urgency badge
+            // Update urgency badge with emoji
             const urgency = urgencyLabels[result.urgency] || urgencyLabels['recommend_visit'];
             const urgencyBadge = document.getElementById('urgencyBadge');
-            urgencyBadge.textContent = urgency.text;
+            urgencyBadge.textContent = `${urgency.emoji} ${urgency.text}`;
             urgencyBadge.className = `inline-block px-4 py-1 rounded-full text-white text-sm font-medium mb-3 ${urgency.color}`;
+
+            // Show/hide emergency alert
+            const emergencyAlert = document.getElementById('emergencyAlert');
+            if (result.urgency === 'emergency') {
+                emergencyAlert.classList.remove('hidden');
+            } else {
+                emergencyAlert.classList.add('hidden');
+            }
 
             // Update department info
             document.getElementById('departmentName').textContent = result.recommended_department;
             document.getElementById('reason').textContent = result.reason;
 
-            // Update alternatives
+            // Store alternatives for switchDepartment
+            currentAlternatives = result.alternatives || [];
+
+            // Update alternatives as clickable buttons
             const alternativesDiv = document.getElementById('alternatives');
-            alternativesDiv.innerHTML = result.alternatives.map(alt => 
-                `<span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm cursor-pointer hover:bg-gray-200 transition">${alt}</span>`
+            alternativesDiv.innerHTML = currentAlternatives.map(alt => 
+                `<button onclick="switchDepartment('${alt}')" class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm cursor-pointer hover:bg-indigo-100 hover:text-indigo-900 transition border border-indigo-200">
+                    ${alt}
+                </button>`
             ).join('');
 
             // Fetch doctors for the recommended department
-            try {
-                const doctorsResponse = await fetch(`/api/doctors?department=${encodeURIComponent(result.recommended_department)}`);
-                if (doctorsResponse.ok) {
-                    const doctorsData = await doctorsResponse.json();
-                    displayDoctors(doctorsData.doctors);
-                }
-            } catch (error) {
-                console.error('Error fetching doctors:', error);
-                document.getElementById('doctorsList').innerHTML = '<p class="text-gray-500">無法載入醫師資料</p>';
-            }
+            await fetchAndDisplayDoctors(result.recommended_department);
 
             // Show results
             document.getElementById('resultsCard').classList.remove('hidden');
@@ -198,6 +210,42 @@
                 urgency: result.urgency,
                 timestamp: new Date().toISOString()
             });
+        }
+
+        async function switchDepartment(department) {
+            // Highlight the selected department in alternatives
+            const alternativesDiv = document.getElementById('alternatives');
+            const buttons = alternativesDiv.querySelectorAll('button');
+            buttons.forEach(btn => {
+                if (btn.textContent.trim() === department) {
+                    btn.classList.remove('bg-indigo-50', 'text-indigo-700', 'border-indigo-200');
+                    btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+                } else {
+                    btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                    btn.classList.add('bg-indigo-50', 'text-indigo-700', 'border-indigo-200');
+                }
+            });
+
+            // Update department name to show switching
+            document.getElementById('departmentName').textContent = department;
+
+            // Fetch and display doctors for the new department
+            await fetchAndDisplayDoctors(department);
+        }
+
+        async function fetchAndDisplayDoctors(department) {
+            try {
+                const doctorsResponse = await fetch(`/api/doctors?department=${encodeURIComponent(department)}`);
+                if (doctorsResponse.ok) {
+                    const doctorsData = await doctorsResponse.json();
+                    displayDoctors(doctorsData.doctors);
+                } else {
+                    document.getElementById('doctorsList').innerHTML = '<p class="text-gray-500">無法載入醫師資料</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching doctors:', error);
+                document.getElementById('doctorsList').innerHTML = '<p class="text-gray-500">無法載入醫師資料</p>';
+            }
         }
 
         function displayDoctors(doctors) {
