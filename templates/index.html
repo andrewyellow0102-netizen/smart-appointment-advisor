@@ -78,7 +78,6 @@
             <div class="border-t border-gray-200 pt-4 mb-4">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">備選科別</h3>
                 <div id="alternatives" class="flex flex-wrap gap-2">
-                    <!-- Clickable alternative department buttons -->
                 </div>
             </div>
 
@@ -86,8 +85,18 @@
             <div class="border-t border-gray-200 pt-4">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">推薦醫師</h3>
                 <div id="doctorsList" class="space-y-3">
-                    <!-- Doctor cards will be inserted here -->
                 </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div id="historySection" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">📋 查詢歷史</h3>
+                <button onclick="clearHistory()" class="text-sm text-gray-400 hover:text-red-500 transition">清除記錄</button>
+            </div>
+            <div id="historyList" class="space-y-2">
+                <!-- History entries will be inserted here -->
             </div>
         </div>
 
@@ -127,6 +136,11 @@
         // Store current alternatives for click switching
         let currentAlternatives = [];
 
+        // Load history on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistory();
+        });
+
         async function analyzeSymptoms() {
             const symptoms = document.getElementById('symptoms').value.trim();
             if (!symptoms) {
@@ -142,12 +156,9 @@
             document.getElementById('errorCard').classList.add('hidden');
 
             try {
-                // Call the analyze API
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ symptoms })
                 });
 
@@ -203,13 +214,16 @@
             // Show results
             document.getElementById('resultsCard').classList.remove('hidden');
 
-            // Save to localStorage history
+            // Save FULL result to localStorage history
             saveToHistory({
+                id: Date.now().toString(),
                 symptoms,
-                department: result.recommended_department,
-                urgency: result.urgency,
+                result,  // full result object
                 timestamp: new Date().toISOString()
             });
+
+            // Refresh history display
+            loadHistory();
         }
 
         async function switchDepartment(department) {
@@ -226,7 +240,7 @@
                 }
             });
 
-            // Update department name to show switching
+            // Update department name
             document.getElementById('departmentName').textContent = department;
 
             // Fetch and display doctors for the new department
@@ -287,6 +301,55 @@
             history.unshift(entry);
             history = history.slice(0, 10); // Keep only last 10
             localStorage.setItem('symptomHistory', JSON.stringify(history));
+        }
+
+        function loadHistory() {
+            const historySection = document.getElementById('historySection');
+            const historyList = document.getElementById('historyList');
+            const history = JSON.parse(localStorage.getItem('symptomHistory') || '[]');
+
+            if (history.length === 0) {
+                historySection.classList.add('hidden');
+                return;
+            }
+
+            historySection.classList.remove('hidden');
+            historyList.innerHTML = history.map((entry, index) => {
+                const urgency = urgencyLabels[entry.result?.urgency] || urgencyLabels['recommend_visit'];
+                const time = new Date(entry.timestamp).toLocaleString('zh-TW', {
+                    month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+                return `
+                <div onclick="restoreFromHistory(${index})" 
+                     class="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs ${urgency.color} text-white px-2 py-0.5 rounded-full">${urgency.emoji} ${urgency.text}</span>
+                            <span class="font-medium text-gray-800 text-sm truncate">${entry.result?.recommended_department || '不詳'}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 truncate">${entry.symptoms}</p>
+                    </div>
+                    <span class="text-xs text-gray-400 ml-2 whitespace-nowrap">${time}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function restoreFromHistory(index) {
+            const history = JSON.parse(localStorage.getItem('symptomHistory') || '[]');
+            const entry = history[index];
+            if (!entry || !entry.result) return;
+
+            // Fill the symptoms input
+            document.getElementById('symptoms').value = entry.symptoms;
+
+            // Restore the results (without re-calling API)
+            displayResults(entry.result, entry.symptoms);
+        }
+
+        function clearHistory() {
+            if (!confirm('確定要清除所有查詢記錄嗎？')) return;
+            localStorage.removeItem('symptomHistory');
+            loadHistory();
         }
     </script>
 </body>
