@@ -1,0 +1,33 @@
+## 任務目標
+建立 FastAPI 後端基本結構 + 前端症狀輸入頁面。
+
+## 詳細需求
+- [ ] 建立 FastAPI app/main.py（路由結構）
+- [ ] 建立 `GET /health` 端點
+- [ ] 建立 `POST /api/analyze` 端點（目前先 mock 回應）
+- [ ] 建立 `GET /api/doctors` 端點（mock 資料）
+- [ ] 建立 `GET /api/departments` 端點
+- [ ] 前端 index.html：症狀輸入框 + 送出按鈕
+- [ ] 前端打 API 並顯示結果（目前顯示 mock 資料）
+- [ ] 顯示「免責聲明」（本系統僅供參考，不構成醫療建議）
+
+## 檔案結構
+```
+app/
+  main.py       # FastAPI 應用程式
+  routers/
+    __init__.py
+    analyze.py  # /api/analyze
+    doctors.py  # /api/doctors
+    departments.py # /api/departments
+data/
+  departments.json  # 科別資料
+  doctors.json      # 醫師資料
+templates/
+  index.html    # 前端頁面
+```
+
+## 完成標準
+- `curl http://localhost:8000/health` 回傳 200
+- 前端輸入症狀點擊送出後，正確發送 POST 請求並顯示結果
+- 整個頁面在本地端可正常運行

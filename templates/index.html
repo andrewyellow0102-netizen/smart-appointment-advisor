@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能掛號建議系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .urgency-routine { background-color: #22c55e; }
+        .urgency-recommend_visit { background-color: #eab308; }
+        .urgency-urgent { background-color: #ef4444; }
+        .urgency-emergency { background-color: #dc2626; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-900 mb-2">
+                🏥 身體不舒服？AI 告訴你該看哪一科
+            </h1>
+            <p class="text-gray-600">輸入您的症狀，我們將為您分析並推薦合適的科別與醫師</p>
+        </div>
+
+        <!-- Symptom Input Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div class="mb-4">
+                <label for="symptoms" class="block text-gray-700 font-medium mb-2">
+                    請描述您的症狀
+                </label>
+                <textarea 
+                    id="symptoms" 
+                    rows="4" 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-none"
+                    placeholder="例如：最近一個月常常頭痛，特別是下午比較嚴重，有時會伴隨視線模糊..."
+                ></textarea>
+            </div>
+            
+            <button 
+                id="analyzeBtn"
+                onclick="analyzeSymptoms()"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center gap-2"
+            >
+                <span>🔍</span>
+                <span id="btnText">開始分析</span>
+            </button>
+        </div>
+
+        <!-- Loading State (Hidden by default) -->
+        <div id="loadingState" class="hidden bg-white rounded-2xl shadow-lg p-8 text-center mb-6">
+            <div class="animate-spin text-4xl mb-4">⏳</div>
+            <p class="text-gray-600">AI 正在分析您的症狀...</p>
+        </div>
+
+        <!-- Results Card (Hidden by default) -->
+        <div id="resultsCard" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <!-- Recommended Department -->
+            <div class="text-center mb-6">
+                <div id="urgencyBadge" class="inline-block px-4 py-1 rounded-full text-white text-sm font-medium mb-3">
+                    建議就醫
+                </div>
+                <h2 class="text-2xl font-bold text-indigo-900 mb-2">推薦就診科別</h2>
+                <div id="departmentName" class="text-4xl font-bold text-indigo-600 mb-4">
+                    神經內科
+                </div>
+                <p id="reason" class="text-gray-600">
+                    持續性頭痛伴隨發燒，建議優先排除腦膜炎或顱內壓升高的可能性。
+                </p>
+            </div>
+
+            <!-- Alternatives -->
+            <div class="border-t border-gray-200 pt-4 mb-4">
+                <h3 class="text-sm font-medium text-gray-500 mb-2">備選科別</h3>
+                <div id="alternatives" class="flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">感染科</span>
+                    <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">家醫科</span>
+                </div>
+            </div>
+
+            <!-- Doctors Section -->
+            <div class="border-t border-gray-200 pt-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">推薦醫師</h3>
+                <div id="doctorsList" class="space-y-3">
+                    <!-- Doctor cards will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Card (Hidden by default) -->
+        <div id="errorCard" class="hidden bg-red-50 border border-red-200 rounded-2xl shadow p-6 mb-6">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">❌</span>
+                <div>
+                    <h3 class="font-semibold text-red-800">發生錯誤</h3>
+                    <p id="errorMessage" class="text-red-600">請稍後再試</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+            <p class="text-amber-800 text-sm text-center">
+                ⚠️ <strong>免責聲明</strong>：本系統僅供參考，不構成醫療建議。如有緊急症狀，請立即就醫或撥打119求助。
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-6 text-gray-500 text-sm">
+            <p>智能掛號建議系統 v0.1.0</p>
+        </div>
+    </div>
+
+    <script>
+        // Urgency level mappings
+        const urgencyLabels = {
+            'routine': { text: '一般', color: 'bg-green-500', textColor: 'text-green-800' },
+            'recommend_visit': { text: '建議就醫', color: 'bg-yellow-500', textColor: 'text-yellow-800' },
+            'urgent': { text: '盡快就醫', color: 'bg-red-500', textColor: 'text-red-800' },
+            'emergency': { text: '急診', color: 'bg-red-600', textColor: 'text-red-800' }
+        };
+
+        async function analyzeSymptoms() {
+            const symptoms = document.getElementById('symptoms').value.trim();
+            if (!symptoms) {
+                alert('請輸入症狀描述');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('btnText').textContent = '分析中...';
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('resultsCard').classList.add('hidden');
+            document.getElementById('errorCard').classList.add('hidden');
+
+            try {
+                // Call the analyze API
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ symptoms })
+                });
+
+                if (!response.ok) {
+                    throw new Error('分析服務暫時無法使用');
+                }
+
+                const result = await response.json();
+                displayResults(result, symptoms);
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || '請稍後再試');
+            } finally {
+                document.getElementById('analyzeBtn').disabled = false;
+                document.getElementById('btnText').textContent = '開始分析';
+                document.getElementById('loadingState').classList.add('hidden');
+            }
+        }
+
+        async function displayResults(result, symptoms) {
+            // Update urgency badge
+            const urgency = urgencyLabels[result.urgency] || urgencyLabels['recommend_visit'];
+            const urgencyBadge = document.getElementById('urgencyBadge');
+            urgencyBadge.textContent = urgency.text;
+            urgencyBadge.className = `inline-block px-4 py-1 rounded-full text-white text-sm font-medium mb-3 ${urgency.color}`;
+
+            // Update department info
+            document.getElementById('departmentName').textContent = result.recommended_department;
+            document.getElementById('reason').textContent = result.reason;
+
+            // Update alternatives
+            const alternativesDiv = document.getElementById('alternatives');
+            alternativesDiv.innerHTML = result.alternatives.map(alt => 
+                `<span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm cursor-pointer hover:bg-gray-200 transition">${alt}</span>`
+            ).join('');
+
+            // Fetch doctors for the recommended department
+            try {
+                const doctorsResponse = await fetch(`/api/doctors?department=${encodeURIComponent(result.recommended_department)}`);
+                if (doctorsResponse.ok) {
+                    const doctorsData = await doctorsResponse.json();
+                    displayDoctors(doctorsData.doctors);
+                }
+            } catch (error) {
+                console.error('Error fetching doctors:', error);
+                document.getElementById('doctorsList').innerHTML = '<p class="text-gray-500">無法載入醫師資料</p>';
+            }
+
+            // Show results
+            document.getElementById('resultsCard').classList.remove('hidden');
+
+            // Save to localStorage history
+            saveToHistory({
+                symptoms,
+                department: result.recommended_department,
+                urgency: result.urgency,
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        function displayDoctors(doctors) {
+            const doctorsList = document.getElementById('doctorsList');
+            
+            if (!doctors || doctors.length === 0) {
+                doctorsList.innerHTML = '<p class="text-gray-500">目前沒有此科別的醫師資料</p>';
+                return;
+            }
+
+            doctorsList.innerHTML = doctors.slice(0, 5).map(doctor => `
+                <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between hover:bg-gray-100 transition">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-semibold text-gray-800">${doctor.name}</span>
+                            <span class="text-sm text-gray-500">${doctor.hospital}</span>
+                        </div>
+                        <p class="text-sm text-gray-600">${doctor.specialty}</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-yellow-500">★ ${doctor.rating.toFixed(1)}</span>
+                            <span class="text-xs text-gray-400">(${doctor.review_count}則評價)</span>
+                        </div>
+                    </div>
+                    <a href="${doctor.appointment_url}" target="_blank" 
+                       class="ml-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
+                        掛號
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorCard').classList.remove('hidden');
+        }
+
+        function saveToHistory(entry) {
+            let history = JSON.parse(localStorage.getItem('symptomHistory') || '[]');
+            history.unshift(entry);
+            history = history.slice(0, 10); // Keep only last 10
+            localStorage.setItem('symptomHistory', JSON.stringify(history));
+        }
+    </script>
+</body>
+</html>
